@@ -2,12 +2,23 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["package.json", "package-lock.json"]
-      }
+      "src": "api/*.js",
+      "use": "@vercel/node"
     }
   ],
-  "buildCommand": "npm install --force && npm run build"
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "api/index.js"
+    }
+  ],
+  "functions": {
+    "api/*.js": {
+      "includeFiles": [
+        "node_modules/fast-cli/**",
+        "node_modules/exec/**",
+        "node_modules/which/**"
+      ]
+    }
+  }
 }
