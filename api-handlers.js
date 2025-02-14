@@ -1,25 +1,50 @@
-const { getExecOutput } = require( './api-handlers-helpers' );
+const { getExecOutput } = require('./api-handlers-helpers');
 var os = require('os');
-
-
-
 
 exports.testSpeedHandler = async () => {
   try {
-    // Use fast-cli's Node.js API directly
-    const result = await fast({
-      upload: true,
-      json: true,
-      timeout: 10000 // 10 seconds timeout
-    });
+    // Execute the speed test using the fast-cli command line tool
+    const command = 'fast --upload --json --timeout 10000';
+    const execResult = await getExecOutput(command);
 
-    // Handle no internet connection case
-    if (!result || result.error) {
+    if (execResult.status !== 200) {
       return {
         status: 400,
         data: {
-          error: result?.error || 'No internet connection',
-          details: 'Failed to perform speed test'
+          error: 'Speed test command failed',
+          details: execResult.data,
+          os: process.platform,
+          server: os.hostname()
+        }
+      };
+    }
+
+    // Parse the JSON output
+    let result;
+    try {
+      result = JSON.parse(execResult.data);
+    } catch (parseError) {
+      console.error('Failed to parse speed test result:', parseError);
+      return {
+        status: 500,
+        data: {
+          error: 'Invalid speed test output',
+          details: parseError.message,
+          os: process.platform,
+          server: os.hostname()
+        }
+      };
+    }
+
+    // Handle errors from the speed test results
+    if (result.error) {
+      return {
+        status: 400,
+        data: {
+          error: result.error,
+          details: 'Speed test failed',
+          os: process.platform,
+          server: os.hostname()
         }
       };
     }
