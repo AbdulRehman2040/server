@@ -11,13 +11,17 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-app.get("/", async ( req, res ) => { 
+app.get("/", (req, res) => {
+    res.send({ message: "Welcome to the Express API!" });
+  });
+
+
+app.get("/speed", async ( req, res ) => { 
 
     const speedTestData = await testSpeedHandler()
     res.status( speedTestData.status )
     res.send( speedTestData.data )    
 });
-
 app.listen( PORT, () => {
 
     console.log( `Listening on port ${ PORT }` );
