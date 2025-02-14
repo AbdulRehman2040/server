@@ -4,20 +4,24 @@ var os = require('os');
 exports.testSpeedHandler = async () => {
   try {
     // Execute the speed test using the fast-cli command line tool
-    const command = 'npx fast --upload --json --timeout 10000';
+    const command = `node_modules/.bin/fast --upload --json --timeout 10000`
     const execResult = await getExecOutput(command);
 
     if (execResult.status !== 200) {
         let errorDetails = execResult.data;
-      return {
-        status: 400,
-        data: {
-            error: "Missing dependency",
-            details: "fast-cli not installed in environment",
-            remediation: "Ensure fast-cli is in package.json dependencies",
-            os: process.platform,
-            server: os.hostname()
-          }
+        return {
+            status: statusCode,
+            data: {
+              error: errorMessage,
+              details: {
+                message: error.message,
+                stack: error.stack, // Add error stack
+                path: process.env.PATH, // Check PATH environment
+                cwd: process.cwd() // Check working directory
+              },
+              os: process.platform,
+              server: os.hostname()
+            }
       };
     }
 

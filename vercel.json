@@ -1,24 +1,14 @@
 {
-  "version": 2,
+  "version": 3,
   "builds": [
     {
       "src": "api/*.js",
       "use": "@vercel/node"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api/index.js"
-    }
-  ],
   "functions": {
     "api/*.js": {
-      "includeFiles": [
-        "node_modules/fast-cli/**",
-        "node_modules/exec/**",
-        "node_modules/which/**"
-      ]
+      "includeFiles": "node_modules/fast-cli/**"
     }
   }
 }
